@@ -1,6 +1,4 @@
 #summary Welcome to the kdtree library wiki.
 
 = kdtree project =
-
-Welcome to the kdtree wiki pages.
 Links to documentation and example programs will be posted here shortly.
