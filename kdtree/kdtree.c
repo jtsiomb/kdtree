@@ -45,7 +45,7 @@ OF SUCH DAMAGE.
 #else
 
 #ifndef I_WANT_THREAD_BUGS
-#error "You are compiling with the fast list node allocator, without pthreads disabled! This WILL break if used from multiple threads."
+#error "You are compiling with the fast list node allocator, with pthreads disabled! This WILL break if used from multiple threads."
 #endif	/* I want thread bugs */
 
 #endif	/* pthread support */
