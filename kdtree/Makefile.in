@@ -1,0 +1,35 @@
+obj = kdtree.o
+lib_a = libkdtree.a
+lib_so = libkdtree.so
+
+CC = gcc
+CFLAGS = -std=c89 -pedantic -Wall -g -O3 -fpic $(opt) $(dbg) $(falloc) $(pthreads)
+
+ifneq ($(pthreads), "")
+LDFLAGS = -lpthread
+endif
+
+.PHONY: all
+all: $(lib_a) $(lib_so)
+
+$(lib_a): $(obj)
+	$(AR) rcs $@ $(obj)
+
+$(lib_so): $(obj)
+	$(CC) -shared -o $@ $(obj) $(LDFLAGS)
+
+.PHONY: clean
+clean:
+	rm -f $(obj) $(lib_a) $(lib_so)
+
+.PHONY: install
+install:
+	cp kdtree.h $(PREFIX)/include/kdtree.h
+	cp libkdtree.so $(PREFIX)/lib/libkdtree.so
+	cp libkdtree.a $(PREFIX)/lib/libkdtree.a
+
+.PHONY: uninstall
+uninstall:
+	rm -f $(PREFIX)/include/kdtree.h
+	rm -f $(PREFIX)/lib/libkdtree.so
+	rm -f $(PREFIX)/lib/libkdtree.a
