@@ -18,6 +18,10 @@ $(lib_a): $(obj)
 $(lib_so): $(obj)
 	$(CC) -shared -o $@ $(obj) $(LDFLAGS)
 
+.PHONY: examples
+examples:
+	cd examples; make
+
 .PHONY: clean
 clean:
 	rm -f $(obj) $(lib_a) $(lib_so)
