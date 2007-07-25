@@ -90,7 +90,7 @@ void *kd_res_itemf(void *set, float *pos);
 void *kd_res_item3(void *set, double *x, double *y, double *z);
 void *kd_res_item3f(void *set, float *x, float *y, float *z);
 
-/* equivalent to kd_res_item(set, 0, 0, 0) */
+/* equivalent to kd_res_item(set, 0) */
 void *kd_res_item_data(void *set);
 
 

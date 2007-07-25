@@ -204,7 +204,7 @@ int kd_insertf(void *tree, const float *pos, void *data)
 	}
 
 	res = kd_insert(tree, buf, data);
-	#ifndef NO_ALLOCA
+#ifndef NO_ALLOCA
 	if(kd->dim > 256)
 #else
 	if(kd->dim > 16)
@@ -212,6 +212,7 @@ int kd_insertf(void *tree, const float *pos, void *data)
 		free(buf);
 	return res;
 }
+
 int kd_insert3(void *tree, double x, double y, double z, void *data)
 {
 	double buf[3];
@@ -380,9 +381,49 @@ void *kd_res_item(void *set, double *pos)
 
 	if(rset->riter) {
 		if(pos) {
-			memcpy(pos, rset->riter->item->pos, rset->tree->dim);
+			memcpy(pos, rset->riter->item->pos, rset->tree->dim * sizeof *pos);
 		}
 		return rset->riter->item->data;
+	}
+	return 0;
+}
+
+void *kd_res_itemf(void *set, float *pos)
+{
+	struct result_set *rset = (struct result_set*)set;
+
+	if(rset->riter) {
+		if(pos) {
+			int i;
+			for(i=0; i<rset->tree->dim; i++) {
+				pos[i] = rset->riter->item->pos[i];
+			}
+		}
+		return rset->riter->item->data;
+	}
+	return 0;
+}
+
+void *kd_res_item3(void *set, double *x, double *y, double *z)
+{
+	struct result_set *rset = (struct result_set*)set;
+
+	if(rset->riter) {
+		if(*x) *x = rset->riter->item->pos[0];
+		if(*y) *y = rset->riter->item->pos[1];
+		if(*z) *z = rset->riter->item->pos[2];
+	}
+	return 0;
+}
+
+void *kd_res_item3f(void *set, float *x, float *y, float *z)
+{
+	struct result_set *rset = (struct result_set*)set;
+
+	if(rset->riter) {
+		if(*x) *x = rset->riter->item->pos[0];
+		if(*y) *y = rset->riter->item->pos[1];
+		if(*z) *z = rset->riter->item->pos[2];
 	}
 	return 0;
 }
