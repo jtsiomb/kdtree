@@ -4,10 +4,7 @@ lib_so = libkdtree.so
 
 CC = gcc
 CFLAGS = -std=c89 -pedantic -Wall -g -O3 -fpic $(opt) $(dbg) $(falloc) $(pthreads)
-
-ifneq ($(pthreads), "")
-LDFLAGS = -lpthread
-endif
+LDFLAGS = $(ldpthread)
 
 .PHONY: all
 all: $(lib_a) $(lib_so)

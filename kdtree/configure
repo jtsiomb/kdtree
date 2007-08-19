@@ -75,6 +75,8 @@ if [ "$FALLOC" = 'yes' ]; then
 fi
 if [ "$PTHREAD" = 'no' ]; then
 	echo 'pthreads = -DNO_PTHREADS' >>Makefile
+else
+	echo 'ldpthread = -lpthread' >>Makefile
 fi
 cat Makefile.in >>Makefile
 
