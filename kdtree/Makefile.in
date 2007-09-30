@@ -3,7 +3,7 @@ lib_a = libkdtree.a
 lib_so = libkdtree.so
 
 CC = gcc
-CFLAGS = -std=c89 -pedantic -Wall -g -O3 -fpic $(opt) $(dbg) $(falloc) $(pthreads)
+CFLAGS = -pedantic -Wall -g -O3 -fpic $(opt) $(dbg) $(falloc) $(pthreads)
 LDFLAGS = $(ldpthread)
 
 .PHONY: all
