@@ -67,20 +67,19 @@ struct kdtree {
 	void (*destr)(void*);
 };
 
-struct result_set {
+struct kdres {
 	struct kdtree *tree;
 	struct res_node *rlist, *riter;
 	int size;
 };
 
-#define KDTREE(ptr)		((struct kdtree*)ptr)
 #define SQ(x)			((x) * (x))
 
 
 static void clear_rec(struct kdnode *node, void (*destr)(void*));
 static int insert_rec(struct kdnode **node, const double *pos, void *data, int dir, int dim);
 static int rlist_insert(struct res_node *list, struct kdnode *item, double dist_sq);
-static void clear_results(struct result_set *tree);
+static void clear_results(struct kdres *set);
 
 #ifdef USE_LIST_NODE_ALLOCATOR
 static struct res_node *alloc_resnode(void);
@@ -92,7 +91,7 @@ static void free_resnode(struct res_node*);
 
 
 
-void *kd_create(int k)
+struct kdtree *kd_create(int k)
 {
 	struct kdtree *tree;
 
@@ -106,7 +105,7 @@ void *kd_create(int k)
 	return tree;
 }
 
-void kd_free(void *tree)
+void kd_free(struct kdtree *tree)
 {
 	if(tree) {
 		kd_clear(tree);
@@ -128,16 +127,15 @@ static void clear_rec(struct kdnode *node, void (*destr)(void*))
 	free(node);
 }
 
-void kd_clear(void *tree)
+void kd_clear(struct kdtree *tree)
 {
-	struct kdtree *kd = KDTREE(tree);
-	clear_rec(kd->root, kd->destr);
-	kd->root = 0;
+	clear_rec(tree->root, tree->destr);
+	tree->root = 0;
 }
 
-void kd_data_destructor(void *tree, void (*destr)(void*))
+void kd_data_destructor(struct kdtree *tree, void (*destr)(void*))
 {
-	KDTREE(tree)->destr = destr;
+	tree->destr = destr;
 }
 
 
@@ -170,16 +168,16 @@ static int insert_rec(struct kdnode **nptr, const double *pos, void *data, int d
 	return insert_rec(&(*nptr)->right, pos, data, new_dir, dim);
 }
 
-int kd_insert(void *tree, const double *pos, void *data)
+int kd_insert(struct kdtree *tree, const double *pos, void *data)
 {
-	return insert_rec(&KDTREE(tree)->root, pos, data, 0, KDTREE(tree)->dim);
+	return insert_rec(&tree->root, pos, data, 0, tree->dim);
 }
 
-int kd_insertf(void *tree, const float *pos, void *data)
+int kd_insertf(struct kdtree *tree, const float *pos, void *data)
 {
 	static double sbuf[16];
 	double *bptr, *buf = 0;
-	struct kdtree *kd = KDTREE(tree);
+	struct kdtree *kd = tree;
 	int res, dim = kd->dim;
 
 	if(dim > 16) {
@@ -209,7 +207,7 @@ int kd_insertf(void *tree, const float *pos, void *data)
 	return res;
 }
 
-int kd_insert3(void *tree, double x, double y, double z, void *data)
+int kd_insert3(struct kdtree *tree, double x, double y, double z, void *data)
 {
 	double buf[3];
 	buf[0] = x;
@@ -218,7 +216,7 @@ int kd_insert3(void *tree, double x, double y, double z, void *data)
 	return kd_insert(tree, buf, data);
 }
 
-int kd_insert3f(void *tree, float x, float y, float z, void *data)
+int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data)
 {
 	double buf[3];
 	buf[0] = x;
@@ -260,11 +258,10 @@ static int find_nearest(struct kdnode *node, const double *pos, double range, st
 	return added_res;
 }
 
-void *kd_nearest_range(void *tree, const double *pos, double range)
+struct kdres *kd_nearest_range(struct kdtree *kd, const double *pos, double range)
 {
 	int ret;
-	struct result_set *rset;
-	struct kdtree *kd = KDTREE(tree);
+	struct kdres *rset;
 
 	if(!(rset = malloc(sizeof *rset))) {
 		return 0;
@@ -274,7 +271,7 @@ void *kd_nearest_range(void *tree, const double *pos, double range)
 		return 0;
 	}
 	rset->rlist->next = 0;
-	rset->tree = tree;
+	rset->tree = kd;
 
 	if((ret = find_nearest(kd->root, pos, range, rset->rlist, 0, kd->dim)) == -1) {
 		kd_res_free(rset);
@@ -285,13 +282,12 @@ void *kd_nearest_range(void *tree, const double *pos, double range)
 	return rset;
 }
 
-void *kd_nearest_rangef(void *tree, const float *pos, float range)
+struct kdres *kd_nearest_rangef(struct kdtree *kd, const float *pos, float range)
 {
 	static double sbuf[16];
 	double *bptr, *buf = 0;
-	struct kdtree *kd = KDTREE(tree);
 	int dim = kd->dim;
-	void *res;
+	struct kdres *res;
 
 	if(dim > 16) {
 #ifndef NO_ALLOCA
@@ -310,7 +306,7 @@ void *kd_nearest_rangef(void *tree, const float *pos, float range)
 		*bptr++ = *pos++;
 	}
 
-	res = kd_nearest_range(tree, buf, range);
+	res = kd_nearest_range(kd, buf, range);
 #ifndef NO_ALLOCA
 	if(kd->dim > 256)
 #else
@@ -320,7 +316,7 @@ void *kd_nearest_rangef(void *tree, const float *pos, float range)
 	return res;
 }
 
-void *kd_nearest_range3(void *tree, double x, double y, double z, double range)
+struct kdres *kd_nearest_range3(struct kdtree *tree, double x, double y, double z, double range)
 {
 	double buf[3];
 	buf[0] = x;
@@ -329,7 +325,7 @@ void *kd_nearest_range3(void *tree, double x, double y, double z, double range)
 	return kd_nearest_range(tree, buf, range);
 }
 
-void *kd_nearest_range3f(void *tree, float x, float y, float z, float range)
+struct kdres *kd_nearest_range3f(struct kdtree *tree, float x, float y, float z, float range)
 {
 	double buf[3];
 	buf[0] = x;
@@ -338,43 +334,36 @@ void *kd_nearest_range3f(void *tree, float x, float y, float z, float range)
 	return kd_nearest_range(tree, buf, range);
 }
 
-void kd_res_free(void *set)
+void kd_res_free(struct kdres *rset)
 {
-	struct result_set *rset = (struct result_set*)set;
-	clear_results(set);
+	clear_results(rset);
 	free_resnode(rset->rlist);
 	free(rset);
 }
 
-int kd_res_size(void *set)
+int kd_res_size(struct kdres *set)
 {
-	return ((struct result_set*)set)->size;
+	return (set->size);
 }
 
-void kd_res_rewind(void *set)
+void kd_res_rewind(struct kdres *rset)
 {
-	struct result_set *rset = (struct result_set*)set;
 	rset->riter = rset->rlist->next;
 }
 
-int kd_res_end(void *set)
+int kd_res_end(struct kdres *rset)
 {
-	struct result_set *rset = (struct result_set*)set;
 	return rset->riter != 0;
 }
 
-int kd_res_next(void *set)
+int kd_res_next(struct kdres *rset)
 {
-	struct result_set *rset = (struct result_set*)set;
-	
 	rset->riter = rset->riter->next;
 	return rset->riter != 0;
 }
 
-void *kd_res_item(void *set, double *pos)
+void *kd_res_item(struct kdres *rset, double *pos)
 {
-	struct result_set *rset = (struct result_set*)set;
-
 	if(rset->riter) {
 		if(pos) {
 			memcpy(pos, rset->riter->item->pos, rset->tree->dim * sizeof *pos);
@@ -384,10 +373,8 @@ void *kd_res_item(void *set, double *pos)
 	return 0;
 }
 
-void *kd_res_itemf(void *set, float *pos)
+void *kd_res_itemf(struct kdres *rset, float *pos)
 {
-	struct result_set *rset = (struct result_set*)set;
-
 	if(rset->riter) {
 		if(pos) {
 			int i;
@@ -400,10 +387,8 @@ void *kd_res_itemf(void *set, float *pos)
 	return 0;
 }
 
-void *kd_res_item3(void *set, double *x, double *y, double *z)
+void *kd_res_item3(struct kdres *rset, double *x, double *y, double *z)
 {
-	struct result_set *rset = (struct result_set*)set;
-
 	if(rset->riter) {
 		if(*x) *x = rset->riter->item->pos[0];
 		if(*y) *y = rset->riter->item->pos[1];
@@ -412,10 +397,8 @@ void *kd_res_item3(void *set, double *x, double *y, double *z)
 	return 0;
 }
 
-void *kd_res_item3f(void *set, float *x, float *y, float *z)
+void *kd_res_item3f(struct kdres *rset, float *x, float *y, float *z)
 {
-	struct result_set *rset = (struct result_set*)set;
-
 	if(rset->riter) {
 		if(*x) *x = rset->riter->item->pos[0];
 		if(*y) *y = rset->riter->item->pos[1];
@@ -424,7 +407,7 @@ void *kd_res_item3f(void *set, float *x, float *y, float *z)
 	return 0;
 }
 
-void *kd_res_item_data(void *set)
+void *kd_res_item_data(struct kdres *set)
 {
 	return kd_res_item(set, 0);
 }
@@ -501,7 +484,7 @@ static int rlist_insert(struct res_node *list, struct kdnode *item, double dist_
 	return 0;
 }
 
-static void clear_results(struct result_set *rset)
+static void clear_results(struct kdres *rset)
 {
 	struct res_node *tmp, *node = rset->rlist->next;
 

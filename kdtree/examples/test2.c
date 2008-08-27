@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   int i, num_pts = DEF_NUM_PTS;
   void *ptree;
   char *data, *pch;
-  struct result_set *presults;
+  struct kdres *presults;
   double pos[3], dist;
   double pt[3] = { 0, 0, 1 };
   double radius = 10;
