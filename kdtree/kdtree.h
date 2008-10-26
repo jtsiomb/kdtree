@@ -1,5 +1,5 @@
 /*
-This file is part of ``struct kdtree *'', a library for working with kd-trees.
+This file is part of ``kdtree'', a library for working with kd-trees.
 Copyright (C) 2007 John Tsiombikas <nuclear@siggraph.org>
 
 Redistribution and use in source and binary forms, with or without
