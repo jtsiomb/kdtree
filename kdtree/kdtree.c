@@ -177,8 +177,7 @@ int kd_insertf(struct kdtree *tree, const float *pos, void *data)
 {
 	static double sbuf[16];
 	double *bptr, *buf = 0;
-	struct kdtree *kd = tree;
-	int res, dim = kd->dim;
+	int res, dim = tree->dim;
 
 	if(dim > 16) {
 #ifndef NO_ALLOCA
@@ -199,9 +198,9 @@ int kd_insertf(struct kdtree *tree, const float *pos, void *data)
 
 	res = kd_insert(tree, buf, data);
 #ifndef NO_ALLOCA
-	if(kd->dim > 256)
+	if(tree->dim > 256)
 #else
-	if(kd->dim > 16)
+	if(tree->dim > 16)
 #endif
 		free(buf);
 	return res;
@@ -353,7 +352,7 @@ void kd_res_rewind(struct kdres *rset)
 
 int kd_res_end(struct kdres *rset)
 {
-	return rset->riter != 0;
+	return rset->riter == 0;
 }
 
 int kd_res_next(struct kdres *rset)
@@ -415,9 +414,7 @@ void *kd_res_item_data(struct kdres *set)
 /* ---- static helpers ---- */
 
 #ifdef USE_LIST_NODE_ALLOCATOR
-/* special list node allocators.
- * TODO: make thread-safety with pthread_mutex a compile-time option
- */
+/* special list node allocators. */
 static struct res_node *free_nodes;
 
 #ifndef NO_PTHREADS

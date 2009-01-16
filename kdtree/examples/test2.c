@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   /* print out all the points found in results */
   printf( "found %d results:\n", kd_res_size(presults) );
 
-  while( kd_res_end( presults ) ) {
+  while( !kd_res_end( presults ) ) {
     /* get the data and position of the current result item */
     pch = (char*)kd_res_item( presults, pos );
     

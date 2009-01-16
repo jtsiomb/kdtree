@@ -87,6 +87,10 @@ else
 	echo 'so_suffix = so' >>Makefile
 fi
 
+if [ "`uname -s`" != MINGW32 ]; then
+	echo 'pic = -fPIC' >>Makefile
+fi
+
 cat Makefile.in >>Makefile
 
 echo 'configuration completed, type make (or gmake) to build.'
