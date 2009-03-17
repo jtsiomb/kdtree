@@ -1,6 +1,6 @@
 /*
 This file is part of ``kdtree'', a library for working with kd-trees.
-Copyright (C) 2007 John Tsiombikas <nuclear@siggraph.org>
+Copyright (C) 2007-2009 John Tsiombikas <nuclear@siggraph.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -55,6 +55,15 @@ int kd_insert(struct kdtree *tree, const double *pos, void *data);
 int kd_insertf(struct kdtree *tree, const float *pos, void *data);
 int kd_insert3(struct kdtree *tree, double x, double y, double z, void *data);
 int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data);
+
+/* Find one of the nearest nodes from the specified point.
+ *
+ * This function returns a pointer to a result set with at most one element.
+ */
+struct kdres *kd_nearest(struct kdtree *tree, const double *pos);
+struct kdres *kd_nearestf(struct kdtree *tree, const float *pos);
+struct kdres *kd_nearest3(struct kdtree *tree, double x, double y, double z);
+struct kdres *kd_nearest3f(struct kdtree *tree, float x, float y, float z);
 
 /* Find any nearest nodes from the specified point within a range.
  *
