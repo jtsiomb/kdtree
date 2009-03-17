@@ -738,7 +738,7 @@ static int rlist_insert(struct res_node *list, struct kdnode *item, double dist_
 	rnode->dist_sq = dist_sq;
 
 	if(dist_sq >= 0.0) {
-		while(list->next && list->next->dist_sq > dist_sq) {
+		while(list->next && list->next->dist_sq < dist_sq) {
 			list = list->next;
 		}
 	}
