@@ -2,7 +2,7 @@
 Welcome to the kdtree library wiki.
 
 == Source Download ==
-You may download the library source code from: [http://kdtree.googlecode.com/files/kdtree-0.5.2.tar.gz]
+You may download the library source code from: [http://kdtree.googlecode.com/files/kdtree-0.5.4.tar.gz]
 
 == Documentation ==
 Documentation is included in the source tarball, in the doc subdirectory. Also, take a look at the [http://kdtree.googlecode.com/svn/kdtree/kdtree.h kdtree.h] header file which is heavily commented, and the [http://kdtree.googlecode.com/svn/kdtree/test.c test.c] example program.
