@@ -1,0 +1,98 @@
+<html>
+	<head>
+		<title>kdtree library manual - installation</title>
+	</head>
+	<body>
+		<h1>Programming guide</h1>
+		<p>Using the kdtree library in your programs is very easy.</p>
+		
+		<h2>Creating a tree</h2>
+		<p>
+			Call the <code>kd_create</code> function to create a tree. It takes a single
+			argument specifying the dimensionality of the data, and returns a pointer to the
+			tree. You need to pass that pointer as an argument to any functions that
+			manipulate the kd-tree.
+		</p>
+		<p>
+			For example you may create a 3-dimensional kd-tree with:<br>
+			<code>void *kd = kd_create(3);</code>
+		</p>
+
+		<h2>Destroying a tree</h2>
+		<p>
+			Call <code>kd_free</code> with a pointer returned from <code>kd_create</code> in
+			order to free the memory occupied by the tree. Note that any data pointers passed
+			by the user with the <code>kd_insert</code> functions will not be freed, unless a
+			"<em>data destructor</em>" function is provided (see below).
+		</p>
+
+		<h2>Managing user pointers</h2>
+		<p>
+			When inserting data to the tree, you may pass a pointer to be stored in the
+			node. If you wish, you may provide a custom "destructor" function to be called
+			for each of these pointers when their node is removed from the tree. You can do
+			that by supplying a pointer to that destructor function with a call to
+			<code>kd_data_destructor</code>. The first argument is again a valid pointer to a
+			kd-tree, while the second argument is a function pointer with the signature:
+			<code>void (*)(void*)</code>.
+		</p>
+
+		<h2>Populating the tree</h2>
+		<p>
+			To insert data to the kd-tree you may use one of the <code>kd_insert</code>
+			functions.<br>
+		</p>
+		<p>
+			All of the insertion functions take a valid tree pointer as their first
+			argument, and an optional pointer to user data to be stored along with the node
+			as their last argument (it can be null if no user data are needed).
+		</p>
+		<p>
+			<code>kd_insert</code>, and <code>kd_insertf</code> expect a
+			pointer to an array of <em>k</em> <code>double</code>s or <code>float</code>s respectively as
+			a second argument, which contain the position of the inserted point. So for
+			example, for a 3D tree you need to pass an array of 3 values.
+		</p>
+		<p>
+			The convenience <code>kd_insert3</code>, and <code>kd_insert3f</code> are meant
+			to be called for 3-dimensional kd-trees (which is considered the most common
+			case), and expect 3 values (<code>double</code>s or <code>float</code>s)
+			signifying the position of the 3-dimensional point to be stored.
+		</p>
+
+		<h2>Performing nearest-neighbor queries</h2>
+		<p>
+			After you have your data in the kd-tree, you can perform queries for discoverying
+			nearest neighbors in a given range around an arbitrary point. The query returns a
+			pointer to the "<em>result set</em>", which can from then on be accessed with the
+			<code>kd_res_*</code> functions.
+		</p>
+		<p>
+			The nearest-neighbor queries are performed with the <code>kd_nearest_range</code>
+			functions. Like the <code>kd_insert</code> functions described above, they also
+			provide generic array argument versions for k-dimensional trees, and
+			3-dimensional convenience functions, all in <code>double</code> and
+			<code>float</code> varieties.
+		</p>
+		<p>
+			For example in order to query for the nearest neighbors around the 2D point (10,
+			15), inside a radius of 3 units, you could do:<br>
+<code>
+void *result_set;
+double pt[] = {10.0, 15.0};
+
+result_set = kd_nearest_range(kd, pt, 3.0);
+</code>
+			where "kd" is a pointer to a 2-dimensional kd-tree returned by
+			<code>kd_create(2)</code>.
+		</p>
+		<p>
+			A result set aquired with one of the <code>kd_nearest_range</code> functions,
+			must be freed by calling <code>kd_res_free</code> and supplying the result set
+			pointer as its only argument.
+		</p>
+		<p>
+			to be continued...
+		</p>
+	</body>
+</html>

@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<title>kdtree library manual - installation</title>
+	</head>
+	<body>
+		<h1>kdtree library manual</h1>
+		<h2>installation guide</h2>
+
+		<p>
+			Setting up kdtree for use is extremely easy. There are two ways to use this
+			library: you can either "properly" install it in the system, or you can just
+			build the kdtree source files along with your program, since the library is very
+			small.
+		</p>
+
+		<h3>proper installation</h3>
+		<p>
+			Just run: <code>./configure</code>, <code>make</code>, and <code>make
+			install</code> (the last one should be executed as root if you are installing the
+			library system-wide).
+		</p>
+		<p>
+			Run <code>./configure --help</code> for configuration options. The most important
+			options are <code>--prefix=&lt;installation path prefix&gt;</code>, and
+			<code>--disable-fastalloc</code> to disable the fast result node allocator, which
+			depends on pthreads for locking.
+		</p>
+
+		<h3>kdtree source files in your program</h3>
+		<p>
+			Just copy <code>kdtree.c</code> and <code>kdtree.h</code> files and build them along
+			with your program. Make sure you have <code>USE_LIST_NODE_ALLOCATOR</code>
+			defined when compiling <code>kdtree.c</code> if you want the fast result node
+			allocator. If you do so, remember to link with libpthread too.
+		</p>
+		<p>
+			Of course you need to keep the copyright notices intact if you merge the kdtree
+			source files with your program in any way.
+		</p>
+	</body>
+</html>
