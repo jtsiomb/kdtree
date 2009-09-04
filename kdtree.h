@@ -56,7 +56,7 @@ int kd_insertf(struct kdtree *tree, const float *pos, void *data);
 int kd_insert3(struct kdtree *tree, double x, double y, double z, void *data);
 int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data);
 
-/* Find one of the nearest nodes from the specified point.
+/* Find the nearest node from a given point.
  *
  * This function returns a pointer to a result set with at most one element.
  */
@@ -65,13 +65,28 @@ struct kdres *kd_nearestf(struct kdtree *tree, const float *pos);
 struct kdres *kd_nearest3(struct kdtree *tree, double x, double y, double z);
 struct kdres *kd_nearest3f(struct kdtree *tree, float x, float y, float z);
 
-/* Find any nearest nodes from the specified point within a range.
+/* Find the N nearest nodes from a given point.
+ *
+ * This function returns a pointer to a result set, with at most N elements,
+ * which can be manipulated with the kd_res_* functions.
+ * The returned pointer can be null as an indication of an error. Otherwise
+ * a valid result set is always returned which may contain 0 or more elements.
+ * The result set must be deallocated with kd_res_free after use.
+ */
+/*
+struct kdres *kd_nearest_n(struct kdtree *tree, const double *pos, int num);
+struct kdres *kd_nearest_nf(struct kdtree *tree, const float *pos, int num);
+struct kdres *kd_nearest_n3(struct kdtree *tree, double x, double y, double z);
+struct kdres *kd_nearest_n3f(struct kdtree *tree, float x, float y, float z);
+*/
+
+/* Find any nearest nodes from a given point within a range.
  *
  * This function returns a pointer to a result set, which can be manipulated
  * by the kd_res_* functions.
  * The returned pointer can be null as an indication of an error. Otherwise
  * a valid result set is always returned which may contain 0 or more elements.
- * The result set must be deallocated with kd_res_free, after use.
+ * The result set must be deallocated with kd_res_free after use.
  */
 struct kdres *kd_nearest_range(struct kdtree *tree, const double *pos, double range);
 struct kdres *kd_nearest_rangef(struct kdtree *tree, const float *pos, float range);
