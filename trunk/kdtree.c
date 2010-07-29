@@ -340,7 +340,7 @@ static int find_nearest_n(struct kdnode *node, const double *pos, double range, 
 static void kd_nearest_i(struct kdnode *node, const double *pos, struct kdnode **result, double *result_dist_sq, struct kdhyperrect* rect)
 {
 	int dir = node->dir;
-	int i, side;
+	int i;
 	double dummy, dist_sq;
 	struct kdnode *nearer_subtree, *farther_subtree;
 	double *nearer_hyperrect_coord, *farther_hyperrect_coord;
@@ -352,13 +352,11 @@ static void kd_nearest_i(struct kdnode *node, const double *pos, struct kdnode *
 		farther_subtree = node->right;
 		nearer_hyperrect_coord = rect->max + dir;
 		farther_hyperrect_coord = rect->min + dir;
-		side = 0;
 	} else {
 		nearer_subtree = node->right;
 		farther_subtree = node->left;
 		nearer_hyperrect_coord = rect->min + dir;
 		farther_hyperrect_coord = rect->max + dir;
-		side = 1;
 	}
 
 	if (nearer_subtree) {
