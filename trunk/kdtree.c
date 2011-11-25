@@ -219,7 +219,7 @@ int kd_insertf(struct kdtree *tree, const float *pos, void *data)
 				return -1;
 			}
 	} else {
-		bptr = sbuf;
+		bptr = buf = sbuf;
 	}
 
 	while(dim-- > 0) {
@@ -468,7 +468,7 @@ struct kdres *kd_nearestf(struct kdtree *tree, const float *pos)
 				return 0;
 			}
 	} else {
-		bptr = sbuf;
+		bptr = buf = sbuf;
 	}
 
 	while(dim-- > 0) {
@@ -570,7 +570,7 @@ struct kdres *kd_nearest_rangef(struct kdtree *kd, const float *pos, float range
 				return 0;
 			}
 	} else {
-		bptr = sbuf;
+		bptr = buf = sbuf;
 	}
 
 	while(dim-- > 0) {
