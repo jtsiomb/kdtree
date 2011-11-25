@@ -10,7 +10,7 @@
 unsigned int get_msec(void)
 {
 	static struct timeval timeval, first_timeval;
-	
+
 	gettimeofday(&timeval, 0);
 
 	if(first_timeval.tv_sec == 0) {
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	int i, vcount = 10;
 	void *kd, *set;
 	unsigned int msec, start;
-	
+
 	if(argc > 1 && isdigit(argv[1][0])) {
 		vcount = atoi(argv[1]);
 	}
