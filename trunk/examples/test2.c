@@ -35,10 +35,10 @@ int main(int argc, char **argv) {
   }
 
   srand( time(0) );
-  
+
   /* create a k-d tree for 3-dimensional points */
   ptree = kd_create( 3 );
-  
+
   /* add some random nodes to the tree (assert nodes are successfully inserted) */
   for( i=0; i<num_pts; i++ ) {
     data[i] = 'a' + i;
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   while( !kd_res_end( presults ) ) {
     /* get the data and position of the current result item */
     pch = (char*)kd_res_item( presults, pos );
-    
+
     /* compute the distance of the current result from the pt */
     dist = sqrt( dist_sq( pt, pos, 3 ) );
 
