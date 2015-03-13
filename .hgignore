@@ -1,0 +1,6 @@
+\.o$
+\.swp$
+\.so$
+\.so\.
+\.a$
+^Makefile$
