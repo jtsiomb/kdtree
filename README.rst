@@ -1,6 +1,8 @@
 kdtree
 ======
 
+.. image:: http://nuclear.mutantstargoat.com/sw/kdtree/img/kdtree_logo.png
+
 Overview
 --------
 kdtree is a simple, easy to use C library for working with kd-trees.
