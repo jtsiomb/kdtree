@@ -99,7 +99,7 @@ struct kdres *kd_nearest_range3f(struct kdtree *tree, float x, float y, float z,
  * a valid result set is always returned which may contain 0 or more elements.
  * The result set must be deallocated with kd_res_free after use.
  */
-struct kdres *kd_in_bounds(struct kdtree *tree, const double *min_pos, const double *max_pos);
+struct kdres *kd_in_bounds(struct kdtree *tree, const double *min_pos, const double *max_pos, int inclusive);
 
 /* frees a result set returned by kd_nearest_range() */
 void kd_res_free(struct kdres *set);

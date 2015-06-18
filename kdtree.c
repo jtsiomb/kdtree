@@ -260,7 +260,7 @@ int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data)
 	return kd_insert(tree, buf, data);
 }
 
-static int in_bounds(struct kdnode *node, const double* min_pos, const double* max_pos, struct res_node *list, int ordered, int dim)
+static int in_bounds(struct kdnode *node, const double* min_pos, const double* max_pos, struct res_node *list, int ordered, int dim, int inclusive)
 {
 	int i, is_in_bounds, ret, added_res = 0;
 
@@ -268,10 +268,23 @@ static int in_bounds(struct kdnode *node, const double* min_pos, const double* m
 
 	is_in_bounds = 1;
 
-	for (i=0; i<dim; i++) if (node->pos[i] < min_pos[i] || node->pos[i] > max_pos[i])
+	if (inclusive)
 	{
-		is_in_bounds = 0;
-		break;
+		for (i=0; i<dim; i++)
+			if (node->pos[i] < min_pos[i] || node->pos[i] > max_pos[i])
+			{
+				is_in_bounds = 0;
+				break;
+			}
+	}
+	else
+	{
+		for (i=0; i<dim; i++)
+			if (node->pos[i] <= min_pos[i] || node->pos[i] >= max_pos[i])
+			{
+				is_in_bounds = 0;
+				break;
+			}	
 	}
 
 	if (is_in_bounds)
@@ -284,7 +297,7 @@ static int in_bounds(struct kdnode *node, const double* min_pos, const double* m
 
 	if (min_pos[node->dir] > node->pos[node->dir])
 	{
-		ret = in_bounds(node->left, min_pos, max_pos, list, ordered, dim);
+		ret = in_bounds(node->left, min_pos, max_pos, list, ordered, dim, inclusive);
 		if (ret == -1)
 			return -1;
 		added_res += ret;
@@ -292,7 +305,7 @@ static int in_bounds(struct kdnode *node, const double* min_pos, const double* m
 
 	if (max_pos[node->dir] < node->pos[node->dir])
 	{
-		ret = in_bounds(node->right, min_pos, max_pos, list, ordered, dim);
+		ret = in_bounds(node->right, min_pos, max_pos, list, ordered, dim, inclusive);
 		if (ret == -1)
 			return -1;
 		added_res += ret;
@@ -576,7 +589,7 @@ static kdres *kd_nearest_n(struct kdtree *kd, const double *pos, int num)
 	return rset;
 }*/
 
-struct kdres *kd_in_bounds(struct kdtree *kd, const double* min_pos, const double* max_pos)
+struct kdres *kd_in_bounds(struct kdtree *kd, const double* min_pos, const double* max_pos, int inclusive)
 {
 	int ret;
 	struct kdres *rset;
@@ -593,7 +606,7 @@ struct kdres *kd_in_bounds(struct kdtree *kd, const double* min_pos, const doubl
 	rset->rlist->next = 0;
 	rset->tree = kd;
 
-	if ((ret = in_bounds(kd->root, min_pos, max_pos, rset->rlist, 0, kd->dim)) == -1) {
+	if ((ret = in_bounds(kd->root, min_pos, max_pos, rset->rlist, 0, kd->dim, inclusive)) == -1) {
 		kd_res_free(rset);
 		return 0;
 	}
