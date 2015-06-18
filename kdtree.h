@@ -93,6 +93,14 @@ struct kdres *kd_nearest_rangef(struct kdtree *tree, const float *pos, float ran
 struct kdres *kd_nearest_range3(struct kdtree *tree, double x, double y, double z, double range);
 struct kdres *kd_nearest_range3f(struct kdtree *tree, float x, float y, float z, float range);
 
+/* Find nodes within a given range.
+ * This function returns a pointer to a result set.
+ * The returned pointer can be null as an indication of an error. Otherwise
+ * a valid result set is always returned which may contain 0 or more elements.
+ * The result set must be deallocated with kd_res_free after use.
+ */
+struct kdres *kd_in_bounds(struct kdtree *tree, const double *min_pos, const double *max_pos);
+
 /* frees a result set returned by kd_nearest_range() */
 void kd_res_free(struct kdres *set);
 

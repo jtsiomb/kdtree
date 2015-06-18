@@ -25,6 +25,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 /* single nearest neighbor search written by Tamas Nepusz <tamas@cs.rhul.ac.uk> */
+/* in_bounds written by Philip Kovac <philip.kovac@iweave.com> */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -257,6 +258,47 @@ int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data)
 	buf[1] = y;
 	buf[2] = z;
 	return kd_insert(tree, buf, data);
+}
+
+static int in_bounds(struct kdnode *node, const double* min_pos, const double* max_pos, struct res_node *list, int ordered, int dim)
+{
+	int i, is_in_bounds, ret, added_res = 0;
+
+	if (!node) return 0;
+
+	is_in_bounds = 1;
+
+	for (i=0; i<dim; i++) if (node->pos[i] < min_pos[i] || node->pos[i] > max_pos[i])
+	{
+		is_in_bounds = 0;
+		break;
+	}
+
+	if (is_in_bounds)
+	{
+		if (rlist_insert(list, node, -1.0) == -1) {
+			return -1;
+		}
+		added_res = 1;
+	}
+
+	if (min_pos[node->dir] > node->pos[node->dir])
+	{
+		ret = in_bounds(node->left, min_pos, max_pos, list, ordered, dim);
+		if (ret == -1)
+			return -1;
+		added_res += ret;
+	}
+
+	if (max_pos[node->dir] < node->pos[node->dir])
+	{
+		ret = in_bounds(node->right, min_pos, max_pos, list, ordered, dim);
+		if (ret == -1)
+			return -1;
+		added_res += ret;
+	}
+
+	return added_res;
 }
 
 static int find_nearest(struct kdnode *node, const double *pos, double range, struct res_node *list, int ordered, int dim)
@@ -533,6 +575,33 @@ static kdres *kd_nearest_n(struct kdtree *kd, const double *pos, int num)
 	kd_res_rewind(rset);
 	return rset;
 }*/
+
+struct kdres *kd_in_bounds(struct kdtree *kd, const double* min_pos, const double* max_pos)
+{
+	int ret;
+	struct kdres *rset;
+
+	if (!(rset = malloc(sizeof *rset))) {
+		return 0;
+	}
+
+	if (!(rset->rlist = alloc_resnode())) {
+		free(rset);
+		return 0;
+	}
+
+	rset->rlist->next = 0;
+	rset->tree = kd;
+
+	if ((ret = in_bounds(kd->root, min_pos, max_pos, rset->rlist, 0, kd->dim)) == -1) {
+		kd_res_free(rset);
+		return 0;
+	}
+
+	rset->size = ret;
+	kd_res_rewind(rset);
+	return rset;
+}
 
 struct kdres *kd_nearest_range(struct kdtree *kd, const double *pos, double range)
 {
