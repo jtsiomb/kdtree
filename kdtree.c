@@ -71,6 +71,7 @@ struct res_node {
 	struct kdnode *item;
 	double dist_sq;
 	struct res_node *next;
+	int expanded;
 };
 
 struct kdtree {
@@ -723,6 +724,7 @@ int kd_res_size(struct kdres *set)
 void kd_res_rewind(struct kdres *rset)
 {
 	rset->riter = rset->rlist->next;
+	if (!(rset->expanded)) res_expand(rset);
 }
 
 int kd_res_end(struct kdres *rset)
@@ -734,6 +736,39 @@ int kd_res_next(struct kdres *rset)
 {
 	rset->riter = rset->riter->next;
 	return rset->riter != 0;
+}
+
+static int res_expand_node(struct res_node** rnode)
+{
+	int size_inc = 0;
+	struct kdnode* node, oldnode;
+	node = rnode->item;
+	while (node->next)
+	{
+		rnode = (rnode->next = alloc_resnode());
+
+		rnode->item = node->next;
+		oldnode = node;
+		node = node->next;
+		size_inc++;
+	}
+	return size_inc;
+}
+
+static int res_expand(struct kdres *rset)
+{
+	struct kdnode* parent_node, child_node;
+	struct res_node* rnode, next_node;
+	if (rset->expanded) return 0; /* Has already been expanded, don't do anything */
+	rnode = rset->riter;
+	while (rnode)
+	{
+		next_node = rnode->next;
+		rset->size += res_expand_node(&rnode);
+		rnode = (rnode->next = next_node);
+	}
+	rset->expanded = 1;
+	return 0;
 }
 
 void *kd_res_item(struct kdres *rset, double *pos)
