@@ -79,7 +79,8 @@ struct kdtree {
 	struct kdhyperrect *rect;
 
 	struct kdnode** node_stack;
-	size_t depth, node_stack_head, node_stack_max;
+	size_t depth, node_stack_max;
+	int node_stack_head;
 	void (*destr)(void*);
 };
 
@@ -129,7 +130,7 @@ static inline struct kdnode* node_stack_pop(struct kdtree* tree)
 	if (tree->node_stack_head == 0)
 		return NULL;
 	else
-		return tree->node_stack[tree->node_stack_head--];
+		return tree->node_stack[--tree->node_stack_head];
 }
 static inline void node_stack_push(struct kdtree* tree, struct kdnode* node)
 {
