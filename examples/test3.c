@@ -9,6 +9,7 @@
 #include "kdtree.h"
 
 #define DEF_NUM_PTS 10000
+#define DIM 3
 
 /* returns the distance squared between two dims-dimensional double arrays */
 static double dist_sq( double *a1, double *a2, int dims );
@@ -21,7 +22,7 @@ int main(int argc, char **argv) {
   void *ptree;
   char *data, *pch;
   struct kdres *presults;
-  double pos[3], dist;
+  double pos[3], dist, minpos[3], maxpos[3];
   double pt[3] = { 0, 0, 1 };
   double radius = 10;
 
@@ -37,7 +38,7 @@ int main(int argc, char **argv) {
   srand( time(0) );
 
   /* create a k-d tree for 3-dimensional points */
-  ptree = kd_create( 3 );
+  ptree = kd_create( DIM );
 
   /* add some random nodes to the tree (assert nodes are successfully inserted) */
   for( i=0; i<num_pts; i++ ) {
@@ -45,8 +46,13 @@ int main(int argc, char **argv) {
     assert( 0 == kd_insert3( ptree, rd(), rd(), rd(), &data[i] ) );
   }
 
+  for ( i = 0; i < DIM; i++)
+	{ minpos[i] = rd();
+	  maxpos[i] = rd();
+	}
+
   /* find points closest to the origin and within distance radius */
-  presults = kd_nearest_range( ptree, pt, radius );
+  presults = kd_in_bounds( ptree, minpos, maxpos, 1);
 
   /* print out all the points found in results */
   printf( "found %d results:\n", kd_res_size(presults) );

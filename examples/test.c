@@ -23,7 +23,7 @@ unsigned int get_msec(void)
 
 int main(int argc, char **argv)
 {
-	int i, vcount = 10;
+	int i, vcount = 10000;
 	void *kd, *set;
 	unsigned int msec, start;
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 	msec = get_msec() - start;
 	printf("range query returned %d items in %.5f sec\n", kd_res_size(set), (float)msec / 1000.0);
 	kd_res_free(set);
-
+	kd_clear(kd);
 	kd_free(kd);
 	return 0;
 }
