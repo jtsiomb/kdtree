@@ -120,6 +120,7 @@ static inline void node_stack_prep(struct kdtree* tree)
 			free(tree->node_stack);
 		tree->node_stack = malloc(sizeof(struct kdnode*) * tree->depth);
 		tree->node_stack_max = tree->depth;
+		tree->node_stack_head = 0;
 	}
 }
 
@@ -148,6 +149,9 @@ struct kdtree *kd_create(int k)
 	tree->destr = 0;
 	tree->rect = 0;
 	tree->depth = 0;
+	tree->node_stack = 0;
+	tree->node_stack_max = 0;
+	tree->node_stack_head = 0;
 
 	return tree;
 }
@@ -185,6 +189,7 @@ void kd_clear(struct kdtree *tree)
 	clear_rec(tree, tree->destr);
 	tree->root = 0;
 	tree->depth = 0;
+
 	if (tree->node_stack) 
 	{
 		free(tree->node_stack);
