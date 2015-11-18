@@ -7,8 +7,8 @@ LDFLAGS = $(kdlib) -lm
 .PHONY: all
 all: test test2
 
-test: test.c $(kdlib)
-test2: test2.c $(kdlib)
+test: test.c $(LDFLAGS)
+test2: test2.c $(LDFLAGS)
 
 .PHONY: clean
 clean:
