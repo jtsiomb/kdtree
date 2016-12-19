@@ -549,7 +549,7 @@ struct kdres* kd_nearest_n(struct kdtree* kd, const double* pos, int num)
 }
 
 struct kdres*
-kd_nearestnf(struct kdtree* tree, const float* pos, int num)
+kd_nearest_nf(struct kdtree* tree, const float* pos, int num)
 {
     static double sbuf[16];
     double *bptr, *buf = 0;
@@ -584,7 +584,7 @@ kd_nearestnf(struct kdtree* tree, const float* pos, int num)
 }
 
 struct kdres*
-kd_nearestn3(struct kdtree* tree, double x, double y, double z, int num)
+kd_nearest_n3(struct kdtree* tree, double x, double y, double z, int num)
 {
     double pos[3];
     pos[0] = x;
@@ -594,7 +594,7 @@ kd_nearestn3(struct kdtree* tree, double x, double y, double z, int num)
 }
 
 struct kdres*
-kd_nearestn3f(struct kdtree* tree, float x, float y, float z, int num)
+kd_nearest_n3f(struct kdtree* tree, float x, float y, float z, int num)
 {
     double pos[3];
     pos[0] = x;
