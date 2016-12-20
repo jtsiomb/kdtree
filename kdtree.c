@@ -108,6 +108,7 @@ static double hyperrect_dist_sq(struct kdhyperrect* rect, const double* pos);
 #ifdef USE_LIST_NODE_ALLOCATOR
 static struct res_node* alloc_resnode(void);
 static void free_resnode(struct res_node*);
+static void free_resnode_buffer();
 #else
 #define alloc_resnode() malloc(sizeof(struct res_node))
 #define free_resnode(n) free(n)
@@ -136,6 +137,10 @@ void kd_free(struct kdtree* tree)
         kd_clear(tree);
         free(tree);
     }
+
+#ifdef USE_LIST_NODE_ALLOCATOR
+    free_resnode_buffer();
+#endif
 }
 
 static void
@@ -603,7 +608,6 @@ kd_nearest_n3f(struct kdtree* tree, float x, float y, float z, int num)
     return kd_nearest_n(tree, pos, num);
 }
 
-
 struct kdres*
 kd_nearest_range(struct kdtree* kd, const double* pos, double range)
 {
@@ -769,9 +773,9 @@ void* kd_res_item_data(struct kdres* set)
     return kd_res_item(set, 0);
 }
 
-double kd_res_dist(struct kdres *set)
+double kd_res_dist(struct kdres* set)
 {
-	return sqrt(set->riter->dist_sq);
+    return sqrt(set->riter->dist_sq);
 }
 
 /* ---- hyperrectangle helpers ---- */
@@ -895,6 +899,29 @@ free_resnode(struct res_node* node)
     pthread_mutex_unlock(&alloc_mutex);
 #endif
 }
+
+static void
+free_resnode_buffer()
+{
+#ifndef NO_PTHREADS
+    pthread_mutex_lock(&alloc_mutex);
+#endif
+
+    if (free_nodes) {
+        struct res_node* ptr = free_nodes;
+        while (ptr) {
+            ptr = ptr->next;
+            free(free_nodes);
+            free_nodes = ptr;
+        }
+        free_nodes = 0;
+    }
+
+#ifndef NO_PTHREADS
+    pthread_mutex_unlock(&alloc_mutex);
+#endif
+}
+
 #endif /* list node allocator or not */
 
 /* inserts the item. if dist_sq is >= 0, then do an ordered insert */
