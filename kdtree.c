@@ -771,7 +771,7 @@ void* kd_res_item_data(struct kdres* set)
 
 double kd_res_dist(struct kdres *set)
 {
-	return set->riter->dist_sq;
+	return sqrt(set->riter->dist_sq);
 }
 
 /* ---- hyperrectangle helpers ---- */
