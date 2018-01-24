@@ -669,6 +669,7 @@ void *kd_res_item3(struct kdres *rset, double *x, double *y, double *z)
 		if(*x) *x = rset->riter->item->pos[0];
 		if(*y) *y = rset->riter->item->pos[1];
 		if(*z) *z = rset->riter->item->pos[2];
+		return rset->riter->item->data;
 	}
 	return 0;
 }
@@ -679,6 +680,7 @@ void *kd_res_item3f(struct kdres *rset, float *x, float *y, float *z)
 		if(*x) *x = rset->riter->item->pos[0];
 		if(*y) *y = rset->riter->item->pos[1];
 		if(*z) *z = rset->riter->item->pos[2];
+		return rset->riter->item->data;
 	}
 	return 0;
 }
