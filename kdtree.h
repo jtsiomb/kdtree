@@ -73,12 +73,10 @@ struct kdres *kd_nearest3f(struct kdtree *tree, float x, float y, float z);
  * a valid result set is always returned which may contain 0 or more elements.
  * The result set must be deallocated with kd_res_free after use.
  */
-/*
 struct kdres *kd_nearest_n(struct kdtree *tree, const double *pos, int num);
 struct kdres *kd_nearest_nf(struct kdtree *tree, const float *pos, int num);
-struct kdres *kd_nearest_n3(struct kdtree *tree, double x, double y, double z);
-struct kdres *kd_nearest_n3f(struct kdtree *tree, float x, float y, float z);
-*/
+struct kdres *kd_nearest_n3(struct kdtree *tree, double x, double y, double z, int num);
+struct kdres *kd_nearest_n3f(struct kdtree *tree, float x, float y, float z, int num);
 
 /* Find any nearest nodes from a given point within a range.
  *
@@ -121,6 +119,9 @@ void *kd_res_item3f(struct kdres *set, float *x, float *y, float *z);
 /* equivalent to kd_res_item(set, 0) */
 void *kd_res_item_data(struct kdres *set);
 
+/* returns the distance between the requested position and the found point.
+ */
+double kd_res_dist(struct kdres *set);
 
 #ifdef __cplusplus
 }
