@@ -26,7 +26,7 @@ terms of the 3-clause BSD license.
 
 Download
 --------
-Latest release (0.5.6): http://nuclear.mutantstargoat.com/sw/kdtree/files/kdtree-0.5.6.tar.gz
+Latest release (0.5.7): http://nuclear.mutantstargoat.com/sw/kdtree/files/kdtree-0.5.7.tar.gz
 
 You can find previous releases here:
 http://nuclear.mutantstargoat.com/sw/kdtree/files/
